@@ -1,0 +1,12 @@
+# Maven target directory
+/target/
+
+# Build logs
+mvnw.log
+
+# Dependency caches
+**/target/dependency/
+**/target/*-SNAPSHOT.jar
+
+# VS Code
+.vscode/
