@@ -3,7 +3,6 @@ package com.oscar;
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.Message;
 
 import com.oscar.ui.MainWindow;
 import com.oscar.xmpp.AuctionMessageTranslator;

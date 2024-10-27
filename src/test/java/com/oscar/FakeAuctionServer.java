@@ -1,12 +1,9 @@
 package com.oscar;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
-
 import java.util.function.Consumer;
 
 import org.jivesoftware.smack.*;
-import org.jivesoftware.smack.packet.Message;
 
 public class FakeAuctionServer {
     public static final String ITEM_ID_AS_LOGIN = "auction-%s";
