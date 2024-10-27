@@ -1,21 +1,14 @@
 package com.oscar;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
-
 import javax.swing.SwingUtilities;
 
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
 
 import com.oscar.ui.MainWindow;
+import com.oscar.xmpp.AuctionMessageTranslator;
 
-/**
- * Hello world!
- *
- */
-public class App 
+public class App implements AuctionEventListener
 {
     public static final int ARG_HOSTNAME = 0;
     public static final int ARG_USERNAME = 1;
@@ -28,6 +21,10 @@ public class App
         ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 
     public final static String MAIN_WINDOW_NAME = "Auction Sniper Main";    
+
+    public final static String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
+    public final static String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
+
     private MainWindow ui;
     @SuppressWarnings("unused") private Chat notToBeGCd;
 
@@ -46,20 +43,10 @@ public class App
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException{
         final Chat chat = connection.getChatManager().createChat(
             auctionId(itemId, connection), 
-            new MessageListener() {
-                @Override
-                public void processMessage(Chat aChat, Message message) {
-                    SwingUtilities.invokeLater(new Runnable(){
-                        public void run(){
-                            ui.showStatus(MainWindow.STATUS_LOST);
-                        }
-                    });
-                }
-            });
+            new AuctionMessageTranslator(this));
 
         this.notToBeGCd = chat;
-
-        chat.sendMessage(new Message());
+        chat.sendMessage(JOIN_COMMAND_FORMAT);
     }
     
     private static String auctionId(String itemId, XMPPConnection connection) {
@@ -81,5 +68,20 @@ public class App
                 ui = new MainWindow();
             }
         });
+    }
+
+    @Override
+    public void auctionClosed() {
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+                ui.showStatus(MainWindow.STATUS_LOST);
+            }
+        });
+    }
+
+    @Override
+    public void currentPrice(int price, int increment) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'currentPrice'");
     }
 }

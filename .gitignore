@@ -10,3 +10,4 @@ mvnw.log
 
 # VS Code
 .vscode/
+.fake

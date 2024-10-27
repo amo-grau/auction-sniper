@@ -5,8 +5,8 @@ import com.oscar.ui.MainWindow;
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
+    public static final String SNIPER_XMPP_ID = "sniper@localhost/Auction";
     private static final String XMPP_HOSTNAME = "localhost";
-    private static final String STATUS_LOST = "lost";
     
     private AuctionSniperDriver driver;
 
@@ -28,7 +28,11 @@ public class ApplicationRunner {
     }
 
     public void showsSniperHasLostAuction(){
-        driver.showsSniperStatus(STATUS_LOST);
+        driver.showsSniperStatus(MainWindow.STATUS_LOST);
+    }
+
+    public void hasShownSniperIsBidding(){
+        driver.showsSniperStatus(MainWindow.STATUS_BIDDING);
     }
 
     public void stop() {

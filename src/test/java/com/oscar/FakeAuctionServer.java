@@ -1,5 +1,10 @@
 package com.oscar;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThat;
+
+import java.util.function.Consumer;
+
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
 
@@ -35,12 +40,32 @@ public class FakeAuctionServer {
             });
     }
 
-    public void hasReceivedJoinRequestFromSniper() throws InterruptedException{
-        messageListener.receivesAMessage();
+    public void hasReceivedJoinRequestFromSniper(String sniperId) throws InterruptedException{
+        receivesAMessageMatching(sniperId, body -> 
+            assertThat(body).isEqualTo(App.JOIN_COMMAND_FORMAT));
     }
 
     public void announceClosed() throws XMPPException{
-        currentChat.sendMessage(new Message());
+        currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
+    }
+
+    public void reportPrice(int price, int increment, String bidder) throws XMPPException{
+        currentChat.sendMessage(
+            String.format("SOLVersion: 1.1; Event: PRICE; "
+                + "CurrentPrice: %d; Increment: %d; Bidder: %s;",
+                price, increment, bidder));
+    }
+
+    public void hasReceivedBid(int bid, String sniperId) throws InterruptedException{
+        assertThat(currentChat.getParticipant()).isEqualTo(sniperId);
+
+        receivesAMessageMatching(sniperId, body -> 
+            assertThat(body).isEqualTo(String.format(App.BID_COMMAND_FORMAT, bid)));
+    }
+
+    public void receivesAMessageMatching(String sniperId, Consumer<String> assertion) throws InterruptedException{
+        messageListener.receivesAMessage(assertion);
+        assertThat(currentChat.getParticipant()).isEqualTo(sniperId);
     }
 
     public void stop(){
