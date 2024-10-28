@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 
 import org.jivesoftware.smack.*;
 
+import com.oscar.xmpp.XMPPAuction;
+
 public class FakeAuctionServer {
     public static final String ITEM_ID_AS_LOGIN = "auction-%s";
     public static final String AUCTION_RESOURCE = "Auction";
@@ -39,7 +41,7 @@ public class FakeAuctionServer {
 
     public void hasReceivedJoinRequestFromSniper(String sniperId) throws InterruptedException{
         receivesAMessageMatching(sniperId, body -> 
-            assertThat(body).isEqualTo(App.JOIN_COMMAND_FORMAT));
+            assertThat(body).isEqualTo(XMPPAuction.JOIN_COMMAND_FORMAT));
     }
 
     public void announceClosed() throws XMPPException{
@@ -57,7 +59,7 @@ public class FakeAuctionServer {
         assertThat(currentChat.getParticipant()).isEqualTo(sniperId);
 
         receivesAMessageMatching(sniperId, body -> 
-            assertThat(body).isEqualTo(String.format(App.BID_COMMAND_FORMAT, bid)));
+            assertThat(body).isEqualTo(String.format(XMPPAuction.BID_COMMAND_FORMAT, bid)));
     }
 
     public void receivesAMessageMatching(String sniperId, Consumer<String> assertion) throws InterruptedException{

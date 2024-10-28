@@ -5,10 +5,11 @@ import javax.swing.SwingUtilities;
 import org.jivesoftware.smack.*;
 
 import com.oscar.ui.MainWindow;
+import com.oscar.ui.SniperStateDisplayer;
 import com.oscar.xmpp.AuctionMessageTranslator;
+import com.oscar.xmpp.XMPPAuction;
 
-public class App implements AuctionEventListener
-{
+public class App {
     public static final int ARG_HOSTNAME = 0;
     public static final int ARG_USERNAME = 1;
     public static final int ARG_PASSWORD = 2;
@@ -20,9 +21,6 @@ public class App implements AuctionEventListener
         ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 
     public final static String MAIN_WINDOW_NAME = "Auction Sniper Main";    
-
-    public final static String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
-    public final static String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
     private MainWindow ui;
     @SuppressWarnings("unused") private Chat notToBeGCd;
@@ -40,12 +38,17 @@ public class App implements AuctionEventListener
     }
 
     private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException{
+        
         final Chat chat = connection.getChatManager().createChat(
-            auctionId(itemId, connection), 
-            new AuctionMessageTranslator(this));
-
+            auctionId(itemId, connection), null);
         this.notToBeGCd = chat;
-        chat.sendMessage(JOIN_COMMAND_FORMAT);
+        
+        Auction auction = new XMPPAuction(chat);
+
+        chat.addMessageListener(
+            new AuctionMessageTranslator(new AuctionSniper(auction, new SniperStateDisplayer(ui))));
+        
+        auction.join();
     }
     
     private static String auctionId(String itemId, XMPPConnection connection) {
@@ -67,20 +70,5 @@ public class App implements AuctionEventListener
                 ui = new MainWindow();
             }
         });
-    }
-
-    @Override
-    public void auctionClosed() {
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
-                ui.showStatus(MainWindow.STATUS_LOST);
-            }
-        });
-    }
-
-    @Override
-    public void currentPrice(int price, int increment) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'currentPrice'");
     }
 }
