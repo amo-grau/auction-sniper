@@ -3,6 +3,8 @@ package com.oscar.xmpp;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oscar.AuctionEventListener.PriceSource;
+
 public class AuctionEvent {
     private final Map<String, String> fields = new HashMap<String, String>();
 
@@ -35,4 +37,10 @@ public class AuctionEvent {
     static String[] fieldsIn(String messageBody){
         return messageBody.split(";");
     }
+
+    public PriceSource isFrom(String sniperId) {
+        return sniperId.equals(bidder()) ? PriceSource.FromSniper : PriceSource.FromOtherBidder;
+    }
+
+    private String bidder() { return get("Bidder"); }
 }

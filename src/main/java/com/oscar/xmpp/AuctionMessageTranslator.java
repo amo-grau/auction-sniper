@@ -8,10 +8,12 @@ import com.oscar.AuctionEventListener;
 
 public class AuctionMessageTranslator implements MessageListener{
     private final AuctionEventListener listener; 
+    private final String sniperId;
 
-    public AuctionMessageTranslator(AuctionEventListener listener)
+    public AuctionMessageTranslator(String sniperId, AuctionEventListener listener)
     {
         this.listener = listener;
+        this.sniperId = sniperId;
     }
 
     @Override
@@ -23,7 +25,7 @@ public class AuctionMessageTranslator implements MessageListener{
             listener.auctionClosed();
         } else if ("PRICE".equals(type)){
             listener.currentPrice(
-                event.currentPrice(), event.increment());
+                event.currentPrice(), event.increment(), event.isFrom(sniperId));
         }
     }
 }
