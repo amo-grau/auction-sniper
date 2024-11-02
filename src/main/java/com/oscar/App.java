@@ -5,7 +5,8 @@ import javax.swing.SwingUtilities;
 import org.jivesoftware.smack.*;
 
 import com.oscar.ui.MainWindow;
-import com.oscar.ui.SniperStateDisplayer;
+import com.oscar.ui.SnipersTableModel;
+import com.oscar.ui.SwingThreadSniperListener;
 import com.oscar.xmpp.AuctionMessageTranslator;
 import com.oscar.xmpp.XMPPAuction;
 
@@ -23,6 +24,7 @@ public class App {
     public final static String MAIN_WINDOW_NAME = "Auction Sniper Main";    
 
     private MainWindow ui;
+    private SnipersTableModel snipers = new SnipersTableModel();
     @SuppressWarnings("unused") private Chat notToBeGCd;
 
     public App() throws Exception{
@@ -44,11 +46,14 @@ public class App {
         this.notToBeGCd = chat;
         
         Auction auction = new XMPPAuction(chat);
+        
+        // TODO: reveisit
+        snipers.sniperStateChanged(SniperSnapshot.joining(itemId));
 
         chat.addMessageListener(
             new AuctionMessageTranslator(
                 connection.getUser(),
-                new AuctionSniper(auction, new SniperStateDisplayer(ui))));
+                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))));
         
         auction.join();
     }
@@ -68,8 +73,7 @@ public class App {
 
     public void startUserInterface() throws Exception{
         SwingUtilities.invokeAndWait(new Runnable() {
-            public void run(){
-                ui = new MainWindow();
+            public void run(){ ui = new MainWindow(snipers);
             }
         });
     }

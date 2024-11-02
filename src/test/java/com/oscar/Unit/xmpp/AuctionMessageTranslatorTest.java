@@ -1,4 +1,4 @@
-package com.oscar.Unit;
+package com.oscar.Unit.xmpp;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -8,7 +8,6 @@ import org.jivesoftware.smack.packet.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -23,7 +22,6 @@ public class AuctionMessageTranslatorTest {
     @Mock
     private AuctionEventListener listener;
 
-    //@InjectMocks
     private AuctionMessageTranslator translator;
 
     public static final Chat UNUSED_CHAT = null;

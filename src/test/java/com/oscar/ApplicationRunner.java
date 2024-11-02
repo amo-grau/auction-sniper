@@ -1,6 +1,7 @@
 package com.oscar;
 
 import com.oscar.ui.MainWindow;
+import com.oscar.ui.SnipersTableModel;
 
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
@@ -9,8 +10,10 @@ public class ApplicationRunner {
     private static final String XMPP_HOSTNAME = "localhost";
     
     private AuctionSniperDriver driver;
+    private String itemId;
 
     public void startBiddingIn(final FakeAuctionServer auction){
+        itemId = auction.getItemId();
         Thread thread = new Thread("Test Application"){
             @Override public void run(){
                 try{
@@ -23,24 +26,29 @@ public class ApplicationRunner {
         
         thread.setDaemon(true);
         thread.start();
+
         driver = new AuctionSniperDriver(1000);
-        driver.showsSniperStatus(MainWindow.STATUS_JOINING);
+        driver.hasTitle(MainWindow.APPLICATION_TITLE);
+        driver.hasColumnTitles();
+        driver.showsSniperStatus(itemId, 0, 0, SnipersTableModel.textFor(SniperState.JOINING));
     }
 
-    public void showsSniperHasLostAuction(){
-        driver.showsSniperStatus(MainWindow.STATUS_LOST);
+    public void showsSniperHasLostAuction(int lastPrice, int lastBid){
+        driver.showsSniperStatus(itemId, lastPrice, lastBid, SnipersTableModel.textFor(SniperState.LOST));
     }
 
-    public void hasShownSniperIsBidding(){
-        driver.showsSniperStatus(MainWindow.STATUS_BIDDING);
+    public void hasShownSniperIsBidding(int lastPrice, int lastBid){
+        driver.showsSniperStatus(itemId, lastPrice, lastBid, SnipersTableModel.textFor(SniperState.BIDDING));
     }
 
-    public void hasShownSniperIsWinning(){
-        driver.showsSniperStatus(MainWindow.STATUS_WINNING);
+    public void hasShownSniperIsWinning(int winningBid){
+        driver.showsSniperStatus(itemId, winningBid, winningBid, 
+            SnipersTableModel.textFor(SniperState.WINNING));
     }
     
-    public void showsSniperHasWonAuction(){
-        driver.showsSniperStatus(MainWindow.STATUS_WON);
+    public void showsSniperHasWonAuction(int lastPrice){
+        driver.showsSniperStatus(itemId, lastPrice, lastPrice,
+                                SnipersTableModel.textFor(SniperState.WON));
     }
 
     public void stop() {
