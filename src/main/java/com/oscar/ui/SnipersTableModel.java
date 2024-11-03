@@ -1,20 +1,24 @@
 package com.oscar.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 
 import com.oscar.SniperListener;
 import com.oscar.SniperSnapshot;
 import com.oscar.SniperState;
+import com.objogate.exception.Defect;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener{
     private final static SniperSnapshot STARTING_UP = SniperSnapshot.joining("");
     private final static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Lost", "Won" };
     
-    private SniperSnapshot snapshot = STARTING_UP;
+    private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
 
     @Override
     public int getRowCount() {
-        return 1;
+        return snapshots.size();
     }
     
     @Override
@@ -24,18 +28,36 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return Column.at(columnIndex).valueIn(snapshot);
+        return Column.at(columnIndex).valueIn(snapshots.get(rowIndex));
     }
 
     @Override
     public void sniperStateChanged(SniperSnapshot newSnapshot) {
-        snapshot = newSnapshot;
-        fireTableRowsUpdated(0, 0);
+        int row = rowMatching(newSnapshot);
+        snapshots.set(row, newSnapshot);
+        fireTableRowsUpdated(row, row);
     }
+
+    private int rowMatching(SniperSnapshot snapshot) {
+        for (int i = 0; i < snapshots.size(); i++){
+            if (snapshot.isForSameItemAs(snapshots.get(i))){
+                return i;
+            }
+        }
+
+        throw new Defect("Cannot find match for " + snapshot);
+    }
+
 
     @Override
     public String getColumnName(int column){
         return Column.at(column).name;
+    }
+
+    public void addSniper(SniperSnapshot newSnapshot){
+        snapshots.add(newSnapshot);
+        int row = snapshots.size() - 1;
+        fireTableRowsInserted(row, row);
     }
 
     public static String textFor(SniperState state){

@@ -23,7 +23,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
-      <scope>test</scope>
+      <!-- <scope>test</scope> -->
     </dependency>
 
         <!-- Mockito for mocking -->
@@ -31,7 +31,7 @@
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>5.0.0</version>
-        <scope>test</scope>
+        <!-- <scope>test</scope> -->
     </dependency>
 
     <!-- AssertJ for fluent assertions -->
@@ -89,7 +89,7 @@
         <groupId>org.windowlicker</groupId>
         <artifactId>windowlicker-core</artifactId>
         <version>DEV</version>
-        <scope>test</scope>
+        <!-- <scope>test</scope> -->
     </dependency>
 
 
@@ -97,14 +97,14 @@
         <groupId>org.windowlicker</groupId>
         <artifactId>windowlicker-swing</artifactId>
         <version>DEV</version>
-        <scope>test</scope>
+        <!-- <scope>test</scope> -->
     </dependency>
 
     <dependency>
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-core</artifactId>
         <version>2.2</version> <!-- You can check for the latest version -->
-        <scope>test</scope>
+        <!-- <scope>test</scope> -->
     </dependency>
   </dependencies>
 
