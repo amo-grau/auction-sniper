@@ -1,11 +1,11 @@
 package com.oscar;
 
+import static org.mockito.ArgumentMatchers.charThat;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -14,6 +14,7 @@ import org.jivesoftware.smack.*;
 import com.oscar.ui.MainWindow;
 import com.oscar.ui.SnipersTableModel;
 import com.oscar.ui.SwingThreadSniperListener;
+import com.oscar.ui.UserRequestListener;
 import com.oscar.xmpp.AuctionMessageTranslator;
 import com.oscar.xmpp.XMPPAuction;
 
@@ -43,12 +44,30 @@ public class App {
         App main = new App();
         XMPPConnection connection = connection(args[ARG_HOSTNAME], args[ARG_USERNAME], args[ARG_PASSWORD]);
         main.disconnectWhenUICloses(connection);
-
-        for (int i = 3; i < args.length; i++){
-            main.joinAuction(connection, args[i]);
-        }
+        main.addUserRequestListenerFor(connection);
     }
 
+    private void addUserRequestListenerFor(XMPPConnection connection) {
+        ui.addUserRequestListener(new UserRequestListener() {
+            @Override
+            public void joinAuction(String itemId) {
+                snipers.addSniper(SniperSnapshot.joining(itemId));
+                Chat chat = connection.getChatManager()
+                .createChat(auctionId(itemId, connection), null);
+
+                notToBeGCd.add(chat);
+
+                Auction auction = new XMPPAuction(chat);
+                chat.addMessageListener(
+                    new AuctionMessageTranslator(connection.getUser(), 
+                    new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers)))
+                );
+
+                auction.join();
+            }
+        });
+    }
+        
     private void disconnectWhenUICloses(XMPPConnection connection) {
         ui.addWindowListener(new WindowAdapter() {
             @Override public void windowClosed(WindowEvent e) {
@@ -83,7 +102,6 @@ public class App {
     }
 
     private static String auctionId(String itemId, XMPPConnection connection) {
-        //return "auction-item-54321@localhost/Auction";
         return String.format(AUCTION_ID_FORMAT, itemId, "localhost");
     }
 

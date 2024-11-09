@@ -11,7 +11,6 @@ import com.oscar.SniperState;
 import com.objogate.exception.Defect;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener{
-    private final static SniperSnapshot STARTING_UP = SniperSnapshot.joining("");
     private final static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Lost", "Won" };
     
     private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
