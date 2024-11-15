@@ -1,7 +1,5 @@
 package com.oscar;
 
-import static org.mockito.ArgumentMatchers.charThat;
-
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ public class App {
             public void joinAuction(String itemId) {
                 snipers.addSniper(SniperSnapshot.joining(itemId));
                 Chat chat = connection.getChatManager()
-                .createChat(auctionId(itemId, connection), null);
+                    .createChat(auctionId(itemId, connection), null);
 
                 notToBeGCd.add(chat);
 
@@ -75,32 +73,7 @@ public class App {
             }
         });
     }
-
-    private void joinAuction(XMPPConnection connection, String itemId) throws Exception{
-        final Chat chat = connection.getChatManager().createChat(
-            auctionId(itemId, connection), null);
-        notToBeGCd.add(chat);
-
-        Auction auction = new XMPPAuction(chat); 
-        
-        safelyAddItemToModel(itemId);
-
-        chat.addMessageListener(
-            new AuctionMessageTranslator(
-                connection.getUser(),
-                new AuctionSniper(itemId, auction, new SwingThreadSniperListener(snipers))));
-        
-        auction.join();
-    }
     
-    private void safelyAddItemToModel(String itemId) throws Exception{
-        SwingUtilities.invokeAndWait(new Runnable() {
-            public void run() {
-                snipers.addSniper(SniperSnapshot.joining(itemId));
-            }
-        });
-    }
-
     private static String auctionId(String itemId, XMPPConnection connection) {
         return String.format(AUCTION_ID_FORMAT, itemId, "localhost");
     }

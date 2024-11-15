@@ -79,7 +79,7 @@
         <version>3.1.0</version>
     </dependency>
 
-        <dependency>
+    <dependency>
         <groupId>org.igniterealtime.smackx</groupId>
         <artifactId>smackx</artifactId>
         <version>3.1.0</version>
@@ -88,7 +88,7 @@
     <dependency>
         <groupId>org.windowlicker</groupId>
         <artifactId>windowlicker-core</artifactId>
-        <version>DEV</version>
+        <version>268</version>
         <!-- <scope>test</scope> -->
     </dependency>
 
@@ -96,7 +96,7 @@
     <dependency>
         <groupId>org.windowlicker</groupId>
         <artifactId>windowlicker-swing</artifactId>
-        <version>DEV</version>
+        <version>268</version>
         <!-- <scope>test</scope> -->
     </dependency>
 

@@ -18,7 +18,7 @@ public class MainWindowTest {
     @Test public void 
     makesUserRequestWhenJoinButtonClicked(){
         final ValueMatcherProbe<String> buttonProbe = 
-            new ValueMatcherProbe<String>(equalTo("an item-id"), "join request");
+            new ValueMatcherProbe<String>(equalTo("item-id"), "join request");
 
         mainWindow.addUserRequestListener(
             new UserRequestListener() {
@@ -27,7 +27,7 @@ public class MainWindowTest {
                 }
             });
 
-        driver.startBiddingFor("an item-id");
+        driver.startBiddingFor("item-id");
         driver.check(buttonProbe);
     }
 }
