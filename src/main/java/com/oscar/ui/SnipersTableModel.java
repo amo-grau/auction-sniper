@@ -13,7 +13,7 @@ import com.oscar.SniperState;
 import com.objogate.exception.Defect;
 
 public class SnipersTableModel extends AbstractTableModel implements SniperListener, PortfolioListener{
-    private final static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Lost", "Won" };
+    private final static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Loosing", "Lost", "Won" };
     
     private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
 

@@ -27,7 +27,7 @@ public class MainWindowTest {
                 }
             });
 
-        driver.startBiddingFor("item-id");
+        driver.startBiddingFor("item-id", Integer.MAX_VALUE);
         driver.check(buttonProbe);
     }
 }
