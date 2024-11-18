@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.oscar.Auction;
 import com.oscar.AuctionHouse;
 import com.oscar.AuctionSniper;
+import com.oscar.Item;
 import com.oscar.SniperCollector;
 import com.oscar.SniperLauncher;
 
@@ -29,14 +30,14 @@ public class SniperLauncherTest {
 
     @Test public void
     addsNewSniperToCollectorAndThenJoinsAuction(){
-        final String itemId = "item 123";
+        final Item item = new Item("item 123", Integer.MAX_VALUE);
 
-        when(auctionHouse.auctionFor(itemId)).thenReturn(auction);
-        launcher.joinAuction(itemId);
+        when(auctionHouse.auctionFor(item)).thenReturn(auction);
+        launcher.joinAuction(item);
 
-        verify(auctionHouse).auctionFor(itemId);
-        verify(auction, times(1)).addAuctionEventListener(argThat(sniperForItem(itemId)));
-        verify(collector, times(1)).addSniper(argThat(sniperForItem(itemId)));
+        verify(auctionHouse).auctionFor(item);
+        verify(auction, times(1)).addAuctionEventListener(argThat(sniperForItem(item.identifier)));
+        verify(collector, times(1)).addSniper(argThat(sniperForItem(item.identifier)));
         verify(auction, times(1)).join();;
     }
 

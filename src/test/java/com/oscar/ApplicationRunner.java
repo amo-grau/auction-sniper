@@ -71,10 +71,10 @@ public class ApplicationRunner {
                                 SnipersTableModel.textFor(SniperState.WON));
     }
     
-        public void hasShownSniperIsLosing(FakeAuctionServer auction, int lastPrice, int lastBid) {
-            driver.showsSniperStatus(auction.getItemId(), lastPrice, lastPrice,
-                SnipersTableModel.textFor(SniperState.LOSING));
-        }
+    public void hasShownSniperIsLosing(FakeAuctionServer auction, int lastPrice, int lastBid) {
+        driver.showsSniperStatus(auction.getItemId(), lastPrice, lastBid,
+            SnipersTableModel.textFor(SniperState.LOSING));
+    }
 
     public void stop() {
         if (driver != null){

@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.text.NumberFormatter;
 
 import com.oscar.App;
+import com.oscar.Item;
 import com.oscar.SniperPortfolio;
 import com.oscar.UserRequestListener;
 import com.oscar.util.Announcer;
@@ -29,40 +30,45 @@ public class MainWindow extends JFrame{
     public static final String JOIN_BUTTON_NAME = "join button";
     public static final String NEW_ITEM_STOP_PRICE_NAME = "stop price";
     
-
     private final Announcer<UserRequestListener> userRequests = Announcer.to(UserRequestListener.class);
     private final SniperPortfolio portfolio;
 
+    final JTextField itemIdField = new JTextField();
+    final JFormattedTextField stopPriceField;
+
     public MainWindow(SniperPortfolio portfolio){
         super(APPLICATION_TITLE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+
+        NumberFormatter formatter = new NumberFormatter();
+        formatter.setValueClass(Integer.class);
+        
+        stopPriceField = new JFormattedTextField(formatter);
+        stopPriceField.setColumns(15);
+        stopPriceField.setName(NEW_ITEM_STOP_PRICE_NAME);
+
+        itemIdField.setColumns(25);
+        itemIdField.setName(NEW_ITEM_ID_NAME);
+
         setName(App.MAIN_WINDOW_NAME);
         this.portfolio = portfolio;
         fillContentPane(makeSnipersTable(), makeControls());
         pack();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+
     }
 
     private JPanel makeControls(){
         JPanel controls = new JPanel(new FlowLayout());
-        final JTextField itemIdField = new JTextField();
-        itemIdField.setColumns(25);
-        itemIdField.setName(NEW_ITEM_ID_NAME);
         controls.add(itemIdField);
-
-        NumberFormatter formatter = new NumberFormatter();
-        formatter.setValueClass(Integer.class);
-        final JFormattedTextField stopPricTextField = new JFormattedTextField(formatter);
-        stopPricTextField.setColumns(15);
-        stopPricTextField.setName(NEW_ITEM_STOP_PRICE_NAME);
-        controls.add(stopPricTextField);
+        controls.add(stopPriceField);
 
         JButton joinAuctionButton = new JButton("Join Auction");
         joinAuctionButton.setName(JOIN_BUTTON_NAME);
         joinAuctionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userRequests.announce().joinAuction(itemIdField.getText());
+                userRequests.announce().joinAuction(new Item(itemId(), stopPrice()));
             }
         });
         controls.add(joinAuctionButton);
@@ -87,5 +93,13 @@ public class MainWindow extends JFrame{
 
     public void addUserRequestListener(UserRequestListener sniperLauncher) {
         userRequests.addListener(sniperLauncher);
+    }
+
+    public String itemId(){
+        return itemIdField.getText();
+    }
+
+    public Integer stopPrice(){
+        return ((Number)stopPriceField.getValue()).intValue();
     }
 }

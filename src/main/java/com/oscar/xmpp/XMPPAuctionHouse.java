@@ -5,6 +5,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import com.oscar.Auction;
 import com.oscar.AuctionHouse;
+import com.oscar.Item;
 
 public class XMPPAuctionHouse implements AuctionHouse{
     private final XMPPConnection connection;
@@ -20,8 +21,8 @@ public class XMPPAuctionHouse implements AuctionHouse{
     }
 
     @Override
-    public Auction auctionFor(String itemId) {
-        return new XMPPAuction(connection, itemId);
+    public Auction auctionFor(Item item) {
+        return new XMPPAuction(connection, item.identifier);
     }
 
     @Override

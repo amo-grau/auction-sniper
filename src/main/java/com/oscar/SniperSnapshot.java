@@ -21,4 +21,8 @@ public record SniperSnapshot(String itemId, int lastPrice, int lastBid, SniperSt
     public boolean isForSameItemAs(SniperSnapshot otherSnapshot) {
         return this.itemId() == otherSnapshot.itemId();
     }
+
+    public SniperSnapshot losing(int newLastPrice) {
+        return new SniperSnapshot(itemId, newLastPrice, lastBid, SniperState.LOSING);
+    }
 }

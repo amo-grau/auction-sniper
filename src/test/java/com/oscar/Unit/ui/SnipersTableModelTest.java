@@ -23,6 +23,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.objogate.exception.Defect;
 import com.oscar.Auction;
 import com.oscar.AuctionSniper;
+import com.oscar.Item;
 import com.oscar.SniperSnapshot;
 import com.oscar.SniperState;
 import com.oscar.ui.SnipersTableModel;
@@ -50,7 +51,7 @@ public class SnipersTableModelTest {
     setsSniperValuesInColumns() {
         SniperSnapshot joining = SniperSnapshot.joining("item id");
         SniperSnapshot bidding = joining.bidding(555,  666);
-        model.sniperAdded(new AuctionSniper(joining.itemId(), auction));
+        model.sniperAdded(new AuctionSniper(new Item(joining.itemId(), Integer.MAX_VALUE), auction));
         verify(listener, atLeastOnce()).tableChanged(argThat(anyInsertionEvent()));
 
         model.sniperStateChanged(bidding);
@@ -71,7 +72,7 @@ public class SnipersTableModelTest {
         SniperSnapshot joining = SniperSnapshot.joining("item123");
         assertEquals(0, model.getRowCount());
 
-        model.sniperAdded(new AuctionSniper(joining.itemId(), auction));
+        model.sniperAdded(new AuctionSniper(new Item(joining.itemId(), Integer.MAX_VALUE), auction));
 
         assertEquals(1, model.getRowCount());
         assertRowMatchesSnapshot(0, joining);
@@ -83,8 +84,8 @@ public class SnipersTableModelTest {
     holdsSnipersInAdditionOrder(){
         ignoreStubs(listener);
 
-        model.sniperAdded(new AuctionSniper("item 0", auction));
-        model.sniperAdded(new AuctionSniper("item 1", auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 0", Integer.MAX_VALUE), auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 1", Integer.MAX_VALUE), auction));
 
         assertEquals("item 0", cellValue(0, Column.ITEM_IDENTIFIER));
         assertEquals("item 1", cellValue(1, Column.ITEM_IDENTIFIER));
@@ -95,8 +96,8 @@ public class SnipersTableModelTest {
         SniperSnapshot joining1 = SniperSnapshot.joining("item 1");
         SniperSnapshot bidding1 = joining1.bidding(555, 666);
 
-        model.sniperAdded(new AuctionSniper("item 1", auction));
-        model.sniperAdded(new AuctionSniper("item 2", auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 1", Integer.MAX_VALUE), auction));
+        model.sniperAdded(new AuctionSniper(new Item("item 2", Integer.MAX_VALUE), auction));
         
         model.sniperStateChanged(bidding1);
 

@@ -9,12 +9,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.oscar.Auction;
 import com.oscar.AuctionSniper;
+import com.oscar.Item;
 import com.oscar.SniperListener;
 import com.oscar.SniperSnapshot;
 import com.oscar.SniperState;
@@ -27,12 +27,11 @@ public class AuctionSniperTest{
     @Mock 
     private Auction auction;
 
-    @InjectMocks
     private AuctionSniper sniper;
 
     @Before public void
     setup(){
-        sniper = new AuctionSniper(AuctionSniperEndToEndTest.ITEM_ID, auction);
+        sniper = new AuctionSniper(new Item(AuctionSniperEndToEndTest.ITEM_ID, 1234), auction);
         sniper.addSniperListener(sniperListener);
     }
 
@@ -89,6 +88,24 @@ public class AuctionSniperTest{
             new SniperSnapshot(AuctionSniperEndToEndTest.ITEM_ID, 135, 135, SniperState.WINNING)
         );
     }
+
+    @Test public void
+    doesNotBidAndReportsLosingIfSubsequentPriceIsAboveStopPrice(){
+        sniper.currentPrice(123, 45, PriceSource.FromOtherBidder);  
+        verify(sniperListener, atLeastOnce()).sniperStateChanged(argThat(itsStateIs(SniperState.BIDDING)));
+
+        sniper.currentPrice(2345, 23, PriceSource.FromOtherBidder);
+        verify(sniperListener, atLeastOnce()).sniperStateChanged(argThat(itsStateIs(SniperState.LOSING)));
+    }
+
+    @Test public void
+    doesNOtBidAndREportsLosingIfFirstPriceIsAboveStopPrice(){}
+
+    @Test public void 
+    reportsLostIfAuctionClosesWhenLosing(){}
+
+    @Test public void 
+    continuesToBeLosingIfPriceAfterWinningIsAboveStopPrice(){}
 
     private ArgumentMatcher<SniperSnapshot> itsStateIs(SniperState expectedState) {
         return snapshot -> snapshot.state() == expectedState;

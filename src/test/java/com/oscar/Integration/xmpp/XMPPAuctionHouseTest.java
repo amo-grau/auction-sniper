@@ -15,6 +15,7 @@ import com.oscar.ApplicationRunner;
 import com.oscar.Auction;
 import com.oscar.AuctionEventListener;
 import com.oscar.FakeAuctionServer;
+import com.oscar.Item;
 import com.oscar.EndToEnd.AuctionSniperEndToEndTest;
 import com.oscar.xmpp.XMPPAuctionHouse;
 
@@ -32,10 +33,10 @@ public class XMPPAuctionHouseTest {
     }
 
     @Test public void
-    receivesEventsFromAuctionServerAfterJOining() throws Exception{
+    receivesEventsFromAuctionServerAfterJoining() throws Exception{
         CountDownLatch auctionWasClosed = new CountDownLatch(1);
 
-        Auction auction = auctionHouse.auctionFor(server.getItemId());
+        Auction auction = auctionHouse.auctionFor(new Item(server.getItemId(), Integer.MAX_VALUE));
         auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 
         auction.join();

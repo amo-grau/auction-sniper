@@ -5,14 +5,16 @@ import com.oscar.util.Announcer;
 public class AuctionSniper implements AuctionEventListener {
 
     private SniperSnapshot snapshot;
+    private final Item item;
     
     private final Announcer<SniperListener> sniperListeners = Announcer.to(SniperListener.class);
 
     private final Auction auction;
 
-    public AuctionSniper(String itemId, Auction auction){
+    public AuctionSniper(Item item, Auction auction){
         this.auction = auction;
-        this.snapshot = SniperSnapshot.joining(itemId);
+        this.snapshot = SniperSnapshot.joining(item.identifier);
+        this.item = item;
     }
 
     public void auctionClosed() {
@@ -29,9 +31,13 @@ public class AuctionSniper implements AuctionEventListener {
 
             case FromOtherBidder:
                 int bid = price + increment;
-                auction.bid(bid);
-                snapshot = snapshot.bidding(price, bid);
-                break;
+                if (item.allowsBid(bid)){
+                    auction.bid(bid);
+                    snapshot = snapshot.bidding(price, bid);
+                    break;
+                } else{
+                    snapshot = snapshot.losing(price);
+                }
         }
 
         notifyChange();
