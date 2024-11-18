@@ -14,7 +14,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import com.oscar.App;
-import com.oscar.SniperSnapshot;
+import com.oscar.SniperPortfolio;
+import com.oscar.UserRequestListener;
 import com.oscar.util.Announcer;
 
 public class MainWindow extends JFrame{
@@ -27,12 +28,13 @@ public class MainWindow extends JFrame{
     
 
     private final Announcer<UserRequestListener> userRequests = Announcer.to(UserRequestListener.class);
-    private final SnipersTableModel snipers;
+    //private final SnipersTableModel snipers;
+    private final SniperPortfolio portfolio;
 
-    public MainWindow(SnipersTableModel snipers){
+    public MainWindow(SniperPortfolio portfolio){
         super(APPLICATION_TITLE);
         setName(App.MAIN_WINDOW_NAME);
-        this.snipers = snipers;
+        this.portfolio = portfolio;
         fillContentPane(makeSnipersTable(), makeControls());
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,7 +55,6 @@ public class MainWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 userRequests.announce().joinAuction(itemIdField.getText());
             }
-            
         });
         controls.add(joinAuctionButton);
 
@@ -68,16 +69,14 @@ public class MainWindow extends JFrame{
     }
 
     private JTable makeSnipersTable() {
-        final JTable snipersTable = new JTable(snipers);
+        SnipersTableModel model = new SnipersTableModel();
+        portfolio.addPortFolioListener(model);
+        final JTable snipersTable = new JTable(model);
         snipersTable.setName(SNIPERS_TABLE_NAME);
         return snipersTable;
     }
 
-    public void sniperStatusChanged(SniperSnapshot sniperSnapshot) {
-        snipers.sniperStateChanged(sniperSnapshot);
-    }
-
-    public void addUserRequestListener(UserRequestListener userRequestListener) {
-        userRequests.addListener(userRequestListener);
+    public void addUserRequestListener(UserRequestListener sniperLauncher) {
+        userRequests.addListener(sniperLauncher);
     }
 }

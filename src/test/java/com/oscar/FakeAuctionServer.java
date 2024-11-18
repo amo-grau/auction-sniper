@@ -9,7 +9,6 @@ import com.oscar.xmpp.XMPPAuction;
 
 public class FakeAuctionServer {
     public static final String ITEM_ID_AS_LOGIN = "auction-%s";
-    public static final String AUCTION_RESOURCE = "Auction";
     public static final String XMPP_HOSTNAME = "localhost";
     public static final String AUCTION_PASSWORD = "auction";
 
@@ -27,7 +26,7 @@ public class FakeAuctionServer {
         connection.connect();
         connection.login(String.format(ITEM_ID_AS_LOGIN, itemId), 
                         AUCTION_PASSWORD, 
-                        AUCTION_RESOURCE);  
+                        XMPPAuction.AUCTION_RESOURCE);  
         
         connection.getChatManager().addChatListener(
             new ChatManagerListener() {
@@ -38,7 +37,7 @@ public class FakeAuctionServer {
             });
     }
 
-    public void hasReceivedJoinRequestFromSniper(String sniperId) throws InterruptedException{
+    public void hasReceivedJoinRequestFrom(String sniperId) throws InterruptedException{
         receivesAMessageMatching(sniperId, body -> 
             assertThat(body).isEqualTo(XMPPAuction.JOIN_COMMAND_FORMAT));
     }

@@ -21,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.objogate.exception.Defect;
+import com.oscar.Auction;
+import com.oscar.AuctionSniper;
 import com.oscar.SniperSnapshot;
 import com.oscar.SniperState;
 import com.oscar.ui.SnipersTableModel;
@@ -29,7 +31,9 @@ import com.oscar.ui.SnipersTableModel;
 public class SnipersTableModelTest {
     @Mock
     private TableModelListener listener;
-
+    @Mock 
+    private Auction auction;
+    
     @InjectMocks
     private SnipersTableModel model;
 
@@ -46,7 +50,7 @@ public class SnipersTableModelTest {
     setsSniperValuesInColumns() {
         SniperSnapshot joining = SniperSnapshot.joining("item id");
         SniperSnapshot bidding = joining.bidding(555,  666);
-        model.addSniper(joining);
+        model.sniperAdded(new AuctionSniper(joining.itemId(), auction));
         verify(listener, atLeastOnce()).tableChanged(argThat(anyInsertionEvent()));
 
         model.sniperStateChanged(bidding);
@@ -67,7 +71,7 @@ public class SnipersTableModelTest {
         SniperSnapshot joining = SniperSnapshot.joining("item123");
         assertEquals(0, model.getRowCount());
 
-        model.addSniper(joining);
+        model.sniperAdded(new AuctionSniper(joining.itemId(), auction));
 
         assertEquals(1, model.getRowCount());
         assertRowMatchesSnapshot(0, joining);
@@ -79,8 +83,8 @@ public class SnipersTableModelTest {
     holdsSnipersInAdditionOrder(){
         ignoreStubs(listener);
 
-        model.addSniper(SniperSnapshot.joining("item 0"));
-        model.addSniper(SniperSnapshot.joining("item 1"));
+        model.sniperAdded(new AuctionSniper("item 0", auction));
+        model.sniperAdded(new AuctionSniper("item 1", auction));
 
         assertEquals("item 0", cellValue(0, Column.ITEM_IDENTIFIER));
         assertEquals("item 1", cellValue(1, Column.ITEM_IDENTIFIER));
@@ -89,11 +93,10 @@ public class SnipersTableModelTest {
     @Test public void
     updatesCorrectRowForSniper(){
         SniperSnapshot joining1 = SniperSnapshot.joining("item 1");
-        SniperSnapshot joining2 = SniperSnapshot.joining("item 2");
         SniperSnapshot bidding1 = joining1.bidding(555, 666);
 
-        model.addSniper(joining1);
-        model.addSniper(joining2);
+        model.sniperAdded(new AuctionSniper("item 1", auction));
+        model.sniperAdded(new AuctionSniper("item 2", auction));
         
         model.sniperStateChanged(bidding1);
 

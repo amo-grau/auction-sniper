@@ -1,5 +1,6 @@
 package com.oscar;
+import java.util.EventListener;
 
-public interface UserRequestListener {
+public interface UserRequestListener extends EventListener{
     void joinAuction(String itemId);
 }

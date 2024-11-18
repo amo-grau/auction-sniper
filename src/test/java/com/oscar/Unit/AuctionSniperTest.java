@@ -32,7 +32,8 @@ public class AuctionSniperTest{
 
     @Before public void
     setup(){
-        sniper = new AuctionSniper(AuctionSniperEndToEndTest.ITEM_ID, auction, sniperListener);
+        sniper = new AuctionSniper(AuctionSniperEndToEndTest.ITEM_ID, auction);
+        sniper.addSniperListener(sniperListener);
     }
 
     @Test public void

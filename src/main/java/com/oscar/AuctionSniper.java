@@ -1,16 +1,17 @@
 package com.oscar;
 
+import com.oscar.util.Announcer;
+
 public class AuctionSniper implements AuctionEventListener {
 
     private SniperSnapshot snapshot;
     
-    private final SniperListener sniperListener;
+    private final Announcer<SniperListener> sniperListeners = Announcer.to(SniperListener.class);
+
     private final Auction auction;
 
-    public AuctionSniper(String itemId, Auction auction, SniperListener sniperListener){
-        this.sniperListener = sniperListener;
+    public AuctionSniper(String itemId, Auction auction){
         this.auction = auction;
-
         this.snapshot = SniperSnapshot.joining(itemId);
     }
 
@@ -37,6 +38,14 @@ public class AuctionSniper implements AuctionEventListener {
     }
 
     private void notifyChange(){
-        sniperListener.sniperStateChanged(snapshot);
+        sniperListeners.announce().sniperStateChanged(snapshot);
+    }
+
+    public SniperSnapshot getSnapshot() {
+        return snapshot;
+    }
+
+    public void addSniperListener(SniperListener swingThreadSniperListener) {
+        sniperListeners.addListener(swingThreadSniperListener);
     }
 }

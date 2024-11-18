@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import com.objogate.wl.swing.probe.ValueMatcherProbe;
 import com.oscar.AuctionSniperDriver;
+import com.oscar.SniperPortfolio;
 import com.oscar.ui.MainWindow;
-import com.oscar.ui.SnipersTableModel;
-import com.oscar.ui.UserRequestListener;
+import com.oscar.UserRequestListener;
 
 public class MainWindowTest {
-    private final SnipersTableModel tabelModel = new SnipersTableModel();
-    private final MainWindow mainWindow = new MainWindow(tabelModel);
+    private final SniperPortfolio portfolio = new SniperPortfolio();
+    private final MainWindow mainWindow = new MainWindow(portfolio);
     private final AuctionSniperDriver driver = new AuctionSniperDriver(100);
 
     @Test public void 

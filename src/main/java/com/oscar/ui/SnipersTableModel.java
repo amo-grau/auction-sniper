@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.oscar.AuctionSniper;
+import com.oscar.PortfolioListener;
 import com.oscar.SniperListener;
 import com.oscar.SniperSnapshot;
 import com.oscar.SniperState;
 import com.objogate.exception.Defect;
 
-public class SnipersTableModel extends AbstractTableModel implements SniperListener{
+public class SnipersTableModel extends AbstractTableModel implements SniperListener, PortfolioListener{
     private final static String[] STATUS_TEXT = { "Joining", "Bidding", "Winning", "Lost", "Won" };
     
     private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
@@ -47,19 +49,24 @@ public class SnipersTableModel extends AbstractTableModel implements SniperListe
         throw new Defect("Cannot find match for " + snapshot);
     }
 
-
     @Override
     public String getColumnName(int column){
         return Column.at(column).name;
     }
-
-    public void addSniper(SniperSnapshot newSnapshot){
+    
+    public static String textFor(SniperState state){
+        return STATUS_TEXT[state.ordinal()];
+    }
+    
+    private void addSniperSnapshot(SniperSnapshot newSnapshot){
         snapshots.add(newSnapshot);
         int row = snapshots.size() - 1;
         fireTableRowsInserted(row, row);
     }
 
-    public static String textFor(SniperState state){
-        return STATUS_TEXT[state.ordinal()];
+    @Override
+    public void sniperAdded(AuctionSniper sniper) {
+        addSniperSnapshot(sniper.getSnapshot());
+        sniper.addSniperListener(new SwingThreadSniperListener(this));    
     }
 }
