@@ -7,11 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.text.NumberFormatter;
 
 import com.oscar.App;
 import com.oscar.SniperPortfolio;
@@ -29,7 +31,6 @@ public class MainWindow extends JFrame{
     
 
     private final Announcer<UserRequestListener> userRequests = Announcer.to(UserRequestListener.class);
-    //private final SnipersTableModel snipers;
     private final SniperPortfolio portfolio;
 
     public MainWindow(SniperPortfolio portfolio){
@@ -48,6 +49,13 @@ public class MainWindow extends JFrame{
         itemIdField.setColumns(25);
         itemIdField.setName(NEW_ITEM_ID_NAME);
         controls.add(itemIdField);
+
+        NumberFormatter formatter = new NumberFormatter();
+        formatter.setValueClass(Integer.class);
+        final JFormattedTextField stopPricTextField = new JFormattedTextField(formatter);
+        stopPricTextField.setColumns(15);
+        stopPricTextField.setName(NEW_ITEM_STOP_PRICE_NAME);
+        controls.add(stopPricTextField);
 
         JButton joinAuctionButton = new JButton("Join Auction");
         joinAuctionButton.setName(JOIN_BUTTON_NAME);
